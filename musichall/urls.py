@@ -15,5 +15,6 @@ urlpatterns = [
     path('details_event/<int:id_event>', views.event_details, name='details_event'),
     path('create_setor/', views.create_setor, name='create_setor'),
     path('list_setor/', views.list_setores, name='list_setor'),
-    path('update_setor/<int:id>', views.update_setor, name='update_setor')
+    path('update_setor/<int:id>', views.update_setor, name='update_setor'),
+    path('delete_setor/<int:id>', views.delete_setor, name='delete_setor')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -434,3 +434,19 @@ def update_setor(request, id):
     })
             
     return render(request, 'setor/edit_setor.html', context)
+
+def delete_setor(request, id):
+    try:
+        setor = models.Setorevento.objects.get(id=id)
+        if request.method == 'POST':
+            setor.delete()
+            messages.success(request, 'Setor apagado com sucesso.')
+            return redirect('list_setor')
+        context = {
+            'setor': setor,
+            **get_user_profile(request)
+        }
+        return render(request, 'setor/delete_setor.html', context)
+    except models.Setorevento.DoesNotExist:
+        messages.error(request, 'Setor não encontrado.')
+        return redirect('list_setor')

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Exluir Usuário{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+    <h1 class="text-center">Excluir Setor</h1>
+    <p class="text-center">Tem certeza que deseja apagar o usuário {{ setor.nome }}</p>
+
+    <form method="post" action="{% url "delete_user" setor.id %}" class="text-center">
+        {% csrf_token %}
+        <div class="text-center">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+            <a href="{% url 'update_setor' setor.id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<h1 class="text-center color_azul">Atualizar de Setor</h1>
+
+<div class="container">
+    <form method="post" class="form_container">
+        {% csrf_token %}
+        <div class="mb-3 form_width">
+            <label for="nome_0" class="form-label color_azul">Nome</label>
+            <input type="text" name="nome" id="nome" class="form-control color_azul" value="{{ setor.nome }}">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="ticket_0" class="form-label color_azul">Quantidade de ingressos</label>
+            <input type="number" name="ticket" id="ticket" class="form-control color_azul" value="{{ setor.quantidade_setor }}">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="evento" class="form-label color_azul">Evento</label>
+            <input type="text" name="evento" id="evento" class="form-control color_azul" value="{{ event.nome|default:"" }}" readonly>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer_form.html" %}
+{% endblock %}

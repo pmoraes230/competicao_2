@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<main class="container py-5">
+    <h1 class="text-center mb-4 color_azul">Lista de setores</h1>
+    <div class="row">
+        {% for setor in setores %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title color_azul">{{ setor.nome }}</h5>
+                    <p class="card-text color_azul">Quantidade de ingressos: {{ setor.quantidade_setor }}</p>
+                    <p class="card-text color_azul">Evento ligado: {{ setor.id_evento.nome }}</p>
+                    <a href="{% url 'update_setor' setor.id %}" class="btn bg_laranja color_azul">Editar setor</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">Nenhum setor encontrado</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'create_setor' %}" class="btn bg_laranja color_cinza mb-4">Cadastrar</a>
+    </div>
+</main>
+
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Evento{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'style/event_details.css' %}">
+{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 col-sm-12 image_event mb-4">
+            {% if event.imagem %}
+                <img src="{{ event.imagem.url }}" alt="{{ event.nome }}" class="img-fluid rounded shadow">
+            {% else %}
+                <img src="{% static 'images/img_event.jpg' %}" alt="img" class="img-fluid rounded shadow">
+            {% endif %}
+        </div>
+
+
+        <div class="col-md-6 col-sm-12">
+            <div class="details_event">
+                <h1 class="color_azul mb-4">{{ event.nome|title }}</h1>
+
+                <div class="row g-3">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="icons_event d-flex align-items-center flex-nowrap mb-2">
+                            <img src="{% static 'icons/desktop/CalendarWeek.svg' %}" alt="icon" class="icons me-2">
+                            <p class="color_azul mb-0">
+                                {{ event.dataevento|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                        <div class="icons_event d-flex align-items-center flex-nowrap mb-2">
+                            <img src="{% static 'icons/desktop/PinMapFill.svg' %}" alt="icon" class="icons me-2">
+                            <p class="color_azul mb-0">
+                                {{ event.localevento }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="icons_event d-flex align-items-center flex-nowrap mb-2">
+                            <img src="{% static 'icons/desktop/CashStack.svg' %}" alt="icon" class="icons me-2">
+                            <p class="color_azul mb-0">
+                                {% if event.preco_evento %}
+                                    R$ {{ event.preco_evento|floatformat:2 }}
+                                {% else %}
+                                    Gratuito
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="icons_event d-flex align-items-center flex-nowrap mb-2">
+                            <img src="{% static 'icons/desktop/PersonFill.svg' %}" alt="icon" class="icons me-2">
+                            <p class="color_azul mb-0">
+                                Capacidade: {{ event.capacidadepessoas }} pessoas
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="description_event">
+                            <h5 class="color_azul">Descrição</h5>
+                            <p class="color_azul">Descrição</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="line_separete"></div>
+
+                <form action="#" class="mt-4">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="setor" class="form-label color_azul">Selecione um setor</label>
+                        <select name="setor" id="setor" class="form-select color_azul">
+                            <option value="">Escolha um setor</option>
+                            {% for setor in setores %}
+                                {% if setor.quantidade_setor > 0 %}
+                                    <option value="{{ setor.id }}">{{ setor.nome }} ({{ setor.quantidade_setor }} ingressos disponiveis no setor)</option>
+                                {% else %}
+                                    <option value="">Sem ingressos Disponiveis</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidade" class="form-label color_azul">quantidade de ingresso</label>
+                        <input type="number" id="quantidade" name="quantidade" class="form-control color_azul" min="0" value="0">
+                    </div>
+                    <p id="total-price" class="color_azul">Preço total: R$ 00,00</p>
+                    <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Comprar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer_form.html" %}
+{% endblock %}

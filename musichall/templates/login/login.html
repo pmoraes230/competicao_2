@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Music Hall - Login{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'style/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="row">
+        <div class="container_login col">
+            <div class="text-center">
+                <img src="{% static 'icons/mobile/senac_1.svg' %}" alt="logo_senac" class="logo_senac center mb-1">
+                <h1 class="h1 fw-bolder color_laranja">Senac Music hall</h1>
+                <h2 class="h2 fw-bolder color_laranja">Login</h2>
+            </div>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }} text-center color_laranja" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form method="post" class="form_login">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="login" class="form-label color_laranja">Login</label>
+                    <input type="text" class="form-control color_laranja" id="login" name="login" placeholder="Email ou CPF" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label color_laranja">Senha</label>
+                    <div class="password_container">
+                        <input type="password" class="form-control color_laranja" id="senha" name="senha" placeholder="Senha" required>
+                        <button class="btn eye_icon" type="button" id="toggle_pass"><img src="{% static 'icons/desktop/eye.svg' %}" alt="icon_eye" class="rounded" id="eye"></button>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn bg_laranja color_cinza">Entrar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col">
+            <img src="{% static 'images/img_login.png' %}" alt="imagem login" class="rounded position_img">
+        </div>
+    </div>
+</main>
+
+{% block scripts %}
+    <script src="{% static 'scripts/see_password.js' %}"></script>
+{% endblock %}
+{% endblock %}

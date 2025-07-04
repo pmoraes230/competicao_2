@@ -1,0 +1,50 @@
+.container_card {
+    display: flex;
+}
+
+.card_event {
+    width: 100%;
+    height: 100%;
+    max-width: 675px;
+    max-height: 213px;
+    background-color: #FFF;
+    border-radius: 10px;
+    border: none;
+}
+
+.img_card {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 200px;
+}
+
+.card_body {
+    max-width: 229px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.container_date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.date_box {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--Primary_Color);
+    padding: 5px 25px;
+    font-size: 48px;
+    border-radius: 5px;
+}

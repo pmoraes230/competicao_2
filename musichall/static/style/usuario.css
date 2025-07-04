@@ -1,0 +1,11 @@
+.password_container {
+    display: flex;
+    align-items: center;
+}
+
+.eye_icon {
+    position: absolute;
+    left: 61%;
+    border: none;
+}
+

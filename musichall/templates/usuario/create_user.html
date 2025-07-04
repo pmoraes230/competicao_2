@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Criar Usuário{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'style/usuario.css' %}">
+{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<h1 class="text-center color_azul">Cadastro de usuários</h1>
+
+<div class="container mt-5">
+    <form method="post" class="form_usuario">
+        {% csrf_token %}
+        <div class="mb-3 form_width">
+            <label for="nome" class="form-label color_azul">Nome Completo</label>
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome" required>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="email" class="form-label color_azul">Email</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="cpfinput" class="form-label color_azul">CPF</label>
+            <input type="text" name="cpfinput" id="cpfinput" class="form-control" placeholder="Digite seu CPF" required>
+            <div id="alert_cpf" class="color_azul"></div>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="id_imagem" class="form-label color_azul">Imagem</label>
+            <input type="file" name="imagem" id="id_imagem" class="form-control color_azul border-rounded" required>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="perfil" class="form-label color_azul">Perfil</label>
+            <select name="perfil" id="perfil" class="form-select form-control color_azul">
+                <option value="" selected disabled>Selecione um perfil</option>
+                {% for perfil in perfis %}
+                    <option value="{{ perfil.id }}">{{ perfil.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="senha" class="form-label color_azul">Senha</label>
+            <div class="password_container">
+                <input type="password" class="form-control color_azul" id="senha" name="senha" placeholder="Senha" required>
+                <button class="btn eye_icon" type="button" id="toggle_pass"><img src="{% static 'icons/desktop/eye.svg' %}" alt="icon_eye" class="rounded" id="eye"></button>
+            </div>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="senha_confirmar" class="form-label color_azul">Confirme sua senha</label>
+            <div class="password_container">
+                <input type="password" class="form-control color_azul" id="senha_confirmar" name="senha_confirmar" placeholder="Senha" required>
+                <button class="btn eye_icon" type="button" id="password_conf"><img src="{% static 'icons/desktop/eye.svg' %}" alt="icon_eye" class="rounded" id="eye_confirm"></button>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+    <script type="module" src="{% static 'scripts/valid_cpf.js' %}"></script>
+    <script src="{% static 'scripts/confirmation_password.js' %}"></script>
+{% endblock %}
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock %}

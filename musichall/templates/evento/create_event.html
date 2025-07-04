@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Criar Evento{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<h1 class="text-center color_azul">Cadastro de Perfil</h1>
+<div class="container">
+    <form method="post" class="form_container">
+        {% csrf_token %}
+        <div class="mb-3 form_width">
+            <label for="nome" class="form-label color_azul">Nome</label>
+            <input type="text" name="nome" id="nome" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="dataevento" class="form-label color_azul">Data do evento</label>
+            <input type="date" name="dataevento" id="dataevento" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="datahorario" class="form-label color_azul">Horário do evento</label>
+            <input type="time" name="datahorario" id="datahorario" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="local" class="form-label color_azul">Local do evento</label>
+            <input type="text" name="local" id="local" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="price" class="form-label color_azul">Preço do evento</label>
+            <input type="number" name="price" id="price" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="imagem" class="form-label color_azul">Imagem do evento</label>
+            <input type="file" name="imagem" id="imagem" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="qtd_pessoas" class="form-label color_azul">Quantidade de pessoas</label>
+            <input type="number" name="qtd_pessoas" id="qtd_pessoas" class="form-control">
+        </div>
+
+        <div class="text-center">
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer_form.html" %}
+{% endblock %}  

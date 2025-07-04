@@ -1,0 +1,26 @@
+body {
+    background-color: var(--Primary_Color);
+}
+
+.password_container {
+    display: flex;
+    align-items: center;
+}
+
+.eye_icon {
+    position: absolute;
+    left: 39%;
+    border: none;
+}
+
+.position_img {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 50%;
+}
+
+.container_login {
+    padding: 15% 22% 0 0;
+}

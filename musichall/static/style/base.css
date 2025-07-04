@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Jockey+One&display=swap');
+
+:root {
+    --cinza: #F2F2F2;
+    --Primary_Color: #064673;
+    --Second_Color: #F29100;
+    --Third_Color: #181C49;
+}
+
+body {
+    background-color: var(--cinza);
+    font-family: "Jockey One", sans-serif;
+}
+
+.bg_laranja {
+    background-color: var(--Second_Color);
+}
+
+.bg_azul {
+    background-color: var(--Primary_Color);
+}
+
+.color_cinza {
+    color: var(--cinza);
+}
+
+.color_laranja {
+    color: var(--Second_Color);
+}
+
+
+.color_laranjaWithHover {
+    color: var(--Second_Color);
+}
+
+.color_laranjaWithHover:hover {
+    color: #a57300;
+}
+
+.color_azul {
+    color: var(--Primary_Color);
+}
+
+.color_azulWithHover {
+    color: var(--Primary_Color);
+}
+
+.color_azulWithHover:hover {
+    color: #032d4b;
+}
+
+.img_header {
+    width: auto;
+    height: 70px;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.pd-4 {
+    padding: 0 30rem 0 0;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
+    clear: both;
+    font-weight: 400;
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: var(--Primary_Color);
+    border: 0;
+    border-radius: var(--bs-dropdown-item-border-radius, 0);
+}
+
+.carousel {
+    position: relative;
+    width: 85%;
+    margin: auto;
+}
+
+.footer_home {
+    background-color: var(--Primary_Color);
+    padding: 20px 0;
+}
+
+.footer_form {
+    margin-top: 3rem;
+    background-color: var(--Primary_Color);
+    height: 4rem;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.form_usuario {
+    margin: auto;
+}
+
+.form_width {
+    max-width: 540px;
+    margin: auto;
+}
+
+.img_update {
+    width: 100px;
+    height: auto;
+    border-radius: 50px;
+}

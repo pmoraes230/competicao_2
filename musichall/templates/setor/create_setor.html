@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<h1 class="text-center color_azul">Cadastro de Setor</h1>
+
+<div class="container">
+    <form method="post" class="form_container">
+        {% csrf_token %}
+        <div class="mb-3 form_width">
+            <label for="event" class="form-label color_azul">Evento</label>
+            <select name="event" id="event" class="form-select color_azul">
+                <option value="">Escolha um evento</option>
+                {% for evento in eventos %}
+                    <option value="{{ evento.id }}" {% if event and event.id == evento.id %}selected{% endif %}>
+                        {{ evento.nome }} - Capacidade {{ evento.capacidadepessoas }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form_width">
+            <label for="nome_0" class="form-label color_azul">Nome</label>
+            <input type="text" name="nome[]" id="nome" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="ticket_0" class="form-label color_azul">Quantidade de ingressos</label>
+            <input type="number" name="ticket[]" id="ticket" class="form-control">
+        </div>
+
+        <div class="text-center">
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/footer/footer_form.html" %}
+{% endblock %}

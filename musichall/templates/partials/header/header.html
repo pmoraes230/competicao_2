@@ -12,7 +12,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link color_azul" href="{% url "create_user" %}">Usuário</a>
+                    <a class="nav-link color_azul" href="{% url "list_users" %}">Usuário</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link color_azul" href="{% url "create_profile" %}">Perfil</a>
@@ -24,7 +24,7 @@
                     <a class="nav-link color_azul" href="{% url "list_setor" %}">setores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link color_azul" href="#">Dashboard Admin</a>
+                    <a class="nav-link color_azul" href="{% url "dash_musichall" %}">Dashboard Admin</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle color_azul" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

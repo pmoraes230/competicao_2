@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block css_extra %}
+    <link rel="stylesheet" href="style/home_dash">
+{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mt-4 color_azul text-center">Dashboard Administrativo</h1>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de Eventos</h5>
+                        <a href="{% url 'dash_evento' %}" class="btn card-text display-4 color_laranja size-25">{{ all_event }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de usuários</h5>
+                        <a href="{% url 'dash_usuario' %}" class="btn card-text display-4 color_laranja size-25">{{ all_user }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de vendas</h5>
+                        <a href="{% url 'dash_vendas' %}" class="btn card-text display-4 color_laranja size-25">{{ all_sales }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h2 class="color_azul">Atividades recentes</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Evento</th>
+                            <th>Clientes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for atividadade in atividades_recentes %}
+                        <tr>
+                            <td class="color_azul">{{ atividadade.data|date:"d/m/Y" }}</td>
+                            <td class="color_azul">{{ atividadade.descricao }}</td>
+                            <td class="color_azul">{{ atividadade.evento }}</td>
+                            <td class="color_azul">{{ atividadade.usuario.nome }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="color_azul">Nenhuma atividade recente.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

@@ -16,8 +16,8 @@
 </ul>
 {% endif %}
 
-<h1 class="text-center color_azul">Cadastro de Perfil</h1>
-<div class="container">
+<h1 class="text-center color_azul">Cadastro de Evento</h1>
+<main class="container">
     <form method="post" class="form_container">
         {% csrf_token %}
         <div class="mb-3 form_width">
@@ -53,9 +53,9 @@
             <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
         </div>
     </form>
-</div>
+</main>
 {% endblock %}
 
 {% block footer %}
-    {% include "partials/footer/footer_form.html" %}
+    {% include "partials/footer/footer.html" %}
 {% endblock %}  

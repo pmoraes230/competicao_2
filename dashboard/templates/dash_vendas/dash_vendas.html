@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vendas{% endblock %}
+
+{% block content %}
+{% block header %}
+{% include "partials/header/header.html" %}
+{% endblock %}
+
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mt-4 text-center color_azul">Dashboard de vendas</h1>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data:</th>
+                        <th>Valor:</th>
+                        <th>Cliente:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venda in vendas %}
+                    <tr>
+                        <td>{{ venda.datavenda }}</td>
+                        <td>{{ venda.valor }}</td>
+                        <td>{{ venda.id_cliente.nome }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

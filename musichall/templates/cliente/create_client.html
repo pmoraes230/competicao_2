@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Criar Perfil{% endblock %}
+{% block title %}Criar cliente{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'style/perfil.css' %}">
 {% endblock %}
@@ -29,16 +29,26 @@
             <input type="text" name="nome" id="nome" class="form-control">
         </div>
         <div class="mb-3 form_width">
-            <label for="descricao" class="form-label color_azul">Descrição</label>
-            <textarea name="descricao" id="descricao" style="resize: none;" class="form-control" rows="7"></textarea>
+            <label for="email" class="form-label color_azul">Email</label>
+            <input type="email" name="email" id="email" class="form-control">
+        </div>
+        <div class="mb-3 form_width">
+            <label for="cpf" class="form-label color_azul">CPF</label>
+            <input type="text" name="cpf" id="cpf" class="form-control">
         </div>
 
         <div class="text-center">
-            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar Cliente</button>
         </div>
     </form>
 </main>
+
+{% block scripts %}
+    <script type="module" src="{% static 'scripts/valid_cpf.js' %}"></script>
+    <script src="{% static 'scripts/confirmation_password.js' %}"></script>
 {% endblock %}
+{% endblock %}
+
 
 {% block footer %}
     {% include "partials/footer/footer.html" %}

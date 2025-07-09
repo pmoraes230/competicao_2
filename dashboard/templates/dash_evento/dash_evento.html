@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vendas{% endblock %}
+
+{% block content %}
+{% block header %}
+{% include "partials/header/header.html" %}
+{% endblock %}
+
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mt-4 text-center color_azul">Dashboard de usuario</h1>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome:</th>
+                        <th>Local:</th>
+                        <th>Horario:</th>
+                        <th>Data:</th>
+                        <th>Preço:</th>
+                        <th>Capacidade de pessoas:</th>
+                        <th>Cadastrado por:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos %}
+                    <tr>
+                        <td>{{ evento.nome }}</td>
+                        <td>{{ evento.localevento }}</td>
+                        <td>{{ evento.horario }}</td>
+                        <td>{{ evento.dataevento }}</td>
+                        <td>{{ evento.preco_evento }}</td>
+                        <td>{{ evento.capacidadepessoas }}</td>
+                        <td>{{ evento.id_user.nome }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

@@ -1,11 +1,23 @@
 from django.shortcuts import render, redirect
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 from django.contrib.auth import logout
+import uuid
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+import io
+from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from functools import wraps
 from . import models
+
 
 # Create your views here.
 def get_user_profile(request):
@@ -30,18 +42,26 @@ def role_required(*roles):
         def _wrapped_view(request, *args, **kwargs):
             user_profile = get_user_profile(request)
             
+            # Verifica se user_profile é válido e é um dicionário
             if not user_profile or not isinstance(user_profile, dict):
                 messages.error(request, 'Erro ao verificar sua sessão. Faça login novamente.')
                 return redirect(reverse('login'))
             
+            # Verifica autenticação
             if not user_profile.get('is_authenticated', False):
                 messages.error(request, 'Você precisa estar logado para acessar esta página.')
                 return redirect(reverse('login'))
             
-            user_profile = get_user_profile(request)
-            if user_profile.get('user_role') not in roles:
+            user_role = user_profile.get('user_role')
+            
+            # Verifica se o papel está na lista de papéis permitidos
+            if user_role not in roles:
+                if user_role == 'Totem':
+                    messages.info(request, 'Acesso restrito. Redirecionando para validação de ingresso.')
+                    return redirect(reverse('validar_ingresso'))
                 messages.error(request, 'Você não tem permissão para acessar esta página.')
                 return redirect(reverse('home'))
+            
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
@@ -69,6 +89,8 @@ def login(request):
             request.session['user_role'] = user.id_perfil.nome
             
             messages.success(request, f'Bem-vindo, {user.nome}!')
+            if user.id_perfil.nome == 'Totem':
+                return redirect('validar_ingresso')
             return redirect('home')
         else:
             messages.error(request, 'Senha incorreta.')
@@ -213,6 +235,7 @@ def edit_user(request, id):
         })
     return render(request, 'usuario/edit_user.html', context)
 
+@role_required('Administrador')
 def delete_user(request, id):
     try:
         user = models.Usuario.objects.get(id=id)
@@ -228,7 +251,8 @@ def delete_user(request, id):
     except models.Usuario.DoesNotExist:
         messages.error(request, 'Usuário não encontrado.')
         return redirect('home')
-    
+
+@role_required('Administrador')
 def create_profile(request):
     context = get_user_profile(request)
     
@@ -376,6 +400,38 @@ def create_setor(request):
     
     return render(request, 'setor/create_setor.html', context)
 
+@role_required('Administrador')
+def register_client(request, id):
+    context = get_user_profile(request)
+    
+    if request.method == 'POST':
+        name_client = request.POST.get('nome')
+        email_client = request.POST.get('email')
+        cpf_client = request.POST.get('cpf')
+        
+        if not all([name_client, email_client, cpf_client]):
+            messages.error(request, 'Todos os campos são obrigátorios.')
+            return redirect(reverse('register_cliente', args=[id]))
+        
+        try:
+            client = models.Cliente.objects.create(
+                nome=name_client,
+                email=email_client,
+                cpf=cpf_client
+            )
+            client.full_clean()
+            client.save()
+            
+            messages.success(request, 'Cliente cadastrado.')
+            request.session['cliente_id'] = client.id
+            return redirect(reverse('details_event', args=[id]))
+        except ValueError as ve:
+            messages.error(request, f'Erro ao salvar cliente: {str(ve)}')
+            return redirect(reverse('register_cliente', args=[id]))
+        
+    context['event_id'] = id
+    return render(request, 'cliente/create_client.html', context)
+
 def event_details(request, id_event): 
     context = get_user_profile(request)
     try:
@@ -387,11 +443,202 @@ def event_details(request, id_event):
             'setores': setores,
         })
         
+        client_id = request.session.get('cliente_id')
+        if client_id:
+            try:
+                cliente = models.Cliente.objects.get(id=client_id)
+                context['cliente'] = cliente
+            except models.Cliente.DoesNotExist:
+                del request.session['cliente_id']
+                
         return render(request, 'evento/details_event.html', context)
         
     except models.Evento.DoesNotExist:
         messages.error(request, 'Evento não encontrado')
-        
+
+def buy_ticket(request, event_id):
+    try:
+        client_id = request.session.get('cliente_id')
+        if not client_id:
+            messages.info(request, 'Por favor, cadastre o cliente antes de comprar ingresso.')
+            return redirect(reverse('register_cliente', args=[event_id]))
+
+        client = models.Cliente.objects.get(id=client_id)
+        event = models.Evento.objects.get(id=event_id)
+        setores = models.Setorevento.objects.filter(id_evento_id=event_id)
+
+        if request.method == 'POST':
+            setor_id = request.POST.get('setor')
+            amount = int(request.POST.get('quantidade', 1))
+
+            if not setor_id:
+                messages.error(request, 'Por favor, selecione um setor.')
+                return redirect(reverse('buy_ticket', args=[event_id]))
+
+            setor = models.Setorevento.objects.get(id=setor_id)
+
+            if amount < 1:
+                messages.error(request, 'A quantidade deve ser pelo menos 1.')
+                return redirect(reverse('buy_ticket', args=[event_id]))
+            
+            if amount > 10:
+                messages.error(request, 'Limite máximo de ingresso para ser comprado é 10')
+                return redirect(reverse('buy_ticket', args=[event_id]))
+
+            if setor.quantidade_setor < amount:
+                messages.error(request, f'Apenas {setor.quantidade_setor} ingressos disponíveis para o setor {setor.nome}.')
+                return redirect(reverse('buy_ticket', args=[event_id]))
+
+            # Calcular o preço total com base no setor
+            total_price = amount * (event.preco_evento or 0.00)  # Usar preço do setor
+            venda = models.Venda.objects.create(
+                id_evento=event,
+                id_cliente=client,  
+                datavenda=timezone.now(),  # Usar DateTime se alterar para DateTimeField
+                valor=total_price
+            )
+            venda.full_clean()
+
+            # Criar ingressos individuais
+            ingressos = []
+            for _ in range(amount):
+                ingresso = models.Ingresso.objects.create(
+                    id_ingresso=str(uuid.uuid4()),
+                    id_evento=event,
+                    id_cliente=client,
+                    id_setor=setor,
+                    id_venda=venda,
+                    data_emissao=timezone.now(),
+                    valor=event.preco_evento or 0.00,
+                    status='emitido'
+                )
+                ingressos.append(ingresso)
+                setor.quantidade_setor -= 1
+                setor.save()
+
+            messages.success(request, 'Compra realizada com sucesso! Ingressos emitidos.')
+            return redirect(reverse('confirmacao_compra', args=[venda.id]))
+
+        context = {
+            'event': event,
+            'setores': setores,
+            'cliente': client,
+            **get_user_profile(request)
+        }
+        return render(request, 'evento/details_event.html', context)
+
+    except models.Evento.DoesNotExist:
+        messages.error(request, 'Evento não encontrado.')
+        return redirect('home')
+    except models.Cliente.DoesNotExist:
+        messages.error(request, 'Cliente não encontrado. Por favor, cadastre-se novamente.')
+        return redirect(reverse('register_cliente', args=[event_id]))
+    except models.Setorevento.DoesNotExist:
+        messages.error(request, 'Setor não encontrado.')
+        return redirect(reverse('buy_ticket', args=[event_id]))
+    
+def confirmacao_compra(request, venda_id):
+    try:
+        venda = models.Venda.objects.get(id=venda_id)
+        ingressos = models.Ingresso.objects.filter(id_venda=venda)
+        context = {
+            'venda': venda,
+            'ingressos': ingressos,
+            'event': venda.id_evento,
+            'cliente': venda.id_cliente,
+            **get_user_profile(request)
+        }
+        return render(request, 'evento/confirmacao_compra.html', context)
+    except models.Venda.DoesNotExist:
+        messages.error(request, 'Venda não encontrada.')
+        return redirect('home')
+    
+def gerar_ingresso_pdf(request, venda_id):
+    try:
+        venda = models.Venda.objects.get(id=venda_id)
+        ingressos = models.Ingresso.objects.filter(id_venda=venda)
+
+        # Criar o buffer para o PDF
+        buffer = io.BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+
+        # Configurar o layout do PDF
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(1 * inch, 10 * inch, "Ingresso para Evento")
+        c.setFont("Helvetica", 12)
+
+        # Informações da venda
+        c.drawString(1 * inch, 9.5 * inch, f"Venda ID: {venda.id}")
+        c.drawString(1 * inch, 9.2 * inch, f"Evento: {venda.id_evento.nome}")
+        c.drawString(1 * inch, 8.9 * inch, f"Cliente: {venda.id_cliente.nome}")
+        c.drawString(1 * inch, 8.6 * inch, f"Data da Venda: {venda.datavenda.strftime('%d/%m/%Y')}")
+        c.drawString(1 * inch, 8.3 * inch, f"Valor Total: R$ {venda.valor:.2f}")
+
+        # Listar ingressos
+        y_position = 7.8 * inch
+        c.drawString(1 * inch, y_position, "Ingressos:")
+        c.line(1 * inch, y_position - 0.1 * inch, 7.5 * inch, y_position - 0.1 * inch)
+
+        y_position -= 0.4 * inch
+        for index, ingresso in enumerate(ingressos):
+            if index > 0:
+                c.line(1 * inch, y_position, 7.5 * inch, y_position)
+            c.drawString(1 * inch, y_position, f"Ingresso ID: {ingresso.id_ingresso}")
+            c.drawString(1 * inch, y_position - 0.2 * inch, f"Setor: {ingresso.id_setor.nome}")
+            c.drawString(1 * inch, y_position - 0.4 * inch, f"Valor: R$ {ingresso.valor:.2f}")
+            c.drawString(1 * inch, y_position - 0.6 * inch, f"Data de Emissão: {ingresso.data_emissao.strftime('%d/%m/%Y %H:%M')}")
+            y_position -= 1.0 * inch
+
+        # Finalizar o PDF
+        c.showPage()
+        c.save()
+
+        # Preparar o e-mail
+        subject = f'Confirmação de Compra - Ingresso Venda {venda.id}'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [venda.id_cliente.email]  # Supondo que o modelo Cliente tenha um campo 'email'
+
+        # Renderizar o template HTML
+        html_content = render_to_string('email/email_ingresso.html', {
+            'venda': venda,
+            'ingressos': ingressos,
+        })
+        # Criar versão em texto puro (removendo tags HTML)
+        text_content = strip_tags(html_content)
+
+        # Criar o e-mail com EmailMultiAlternatives
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,  # Corpo em texto puro
+            from_email=from_email,
+            to=to_email,
+        )
+        email.attach_alternative(html_content, "text/html")  # Anexar versão HTML
+
+        # Anexar o PDF
+        buffer.seek(0)
+        email.attach(f'ingresso_venda_{venda.id}.pdf', buffer.getvalue(), 'application/pdf')
+
+        # Enviar o e-mail
+        print("enviado")
+        email.send()
+
+        # Enviar o PDF como resposta para download
+        buffer.seek(0)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="ingresso_venda_{venda.id}.pdf"'
+        response.write(buffer.getvalue())
+        buffer.close()
+        return response
+
+    except models.Venda.DoesNotExist:
+        messages.error(request, 'Venda não encontrada.')
+        return redirect('home')
+    except Exception as e:
+        messages.error(request, f'Erro ao enviar o e-mail: {str(e)}')
+        return redirect('home')
+
+@role_required('Administrador')
 def list_setores(request):
     context = get_user_profile(request)
     setor = models.Setorevento.objects.all()
@@ -399,6 +646,7 @@ def list_setores(request):
     context['setores'] = setor
     return render(request, 'setor/list_setor.html', context)
 
+@role_required('Administrador')
 def update_setor(request, id):
     context = get_user_profile(request)
     
@@ -430,11 +678,12 @@ def update_setor(request, id):
     
     context.update({
         'setor': setor,
-        'event': setor.id_evento
+        'event': setor.id_evento,
     })
             
     return render(request, 'setor/edit_setor.html', context)
 
+@role_required('Administrador')
 def delete_setor(request, id):
     try:
         setor = models.Setorevento.objects.get(id=id)
@@ -450,3 +699,14 @@ def delete_setor(request, id):
     except models.Setorevento.DoesNotExist:
         messages.error(request, 'Setor não encontrado.')
         return redirect('list_setor')
+
+@role_required('Administrador')
+def list_users(request):
+    context = get_user_profile(request)
+
+    context.update({
+        'users': models.Usuario.objects.all()
+    })
+    
+    return render(request, 'usuario/list_usuario.html', context)
+    

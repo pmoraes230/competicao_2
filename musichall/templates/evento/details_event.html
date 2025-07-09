@@ -20,7 +20,7 @@
 </ul>
 {% endif %}
 
-<div class="container">
+<main class="container">
     <div class="row">
         <div class="col-md-3 col-sm-12 image_event mb-4">
             {% if event.imagem %}
@@ -79,7 +79,11 @@
 
                 <div class="line_separete"></div>
 
-                <form action="#" class="mt-4">
+                {% if not cliente %}
+                <p class="mt-4 color_azul">Por favor, cadastre um cliente antes de comprar o ingresso.</p>
+                <a href="{% url "register_cliente" event.id %}" class="btn btn-primary mt-2">Cadastrar cliente</a>
+                {% else %}
+                <form action="{% url "buy_ticket" event.id %}" method="post" class="mt-4">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="setor" class="form-label color_azul">Selecione um setor</label>
@@ -98,16 +102,17 @@
                         <label for="quantidade" class="form-label color_azul">quantidade de ingresso</label>
                         <input type="number" id="quantidade" name="quantidade" class="form-control color_azul" min="0" value="0">
                     </div>
-                    <p id="total-price" class="color_azul">Preço total: R$ 00,00</p>
+                    <p id="total-price" class="color_azul">Preço total: R$ {{ event.preco_evento|floatformat:2 }}</p>
                     <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Comprar</button>
                 </form>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
+</main>
 
 {% endblock %}
 
 {% block footer %}
-    {% include "partials/footer/footer_form.html" %}
+    {% include "partials/footer/footer.html" %}
 {% endblock %}

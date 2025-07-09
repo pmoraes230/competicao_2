@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Validador {% endblock %}
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+<main class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h1 class="text-center color_azul">Validador de ingresso</h1>
+
+    <form action="#" method="post">
+        {% csrf_token %}
+        <div class="mb-3 form_width">
+            <label for="ingresso_id" class="form-label color_azul">Imagem</label>
+            <input type="text" name="ingresso_id" id="ingresso_id" class="form-control color_azul border-rounded" required>
+        </div>
+        <div class="text-center">
+            <button type="submit" id="btn_post" class="btn bg_laranja color_cinza mb-4">Cadastrar</button>
+        </div>
+    </form>
+</main>
+
+
+
+{% endblock %}
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

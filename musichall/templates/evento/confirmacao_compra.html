@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ingresso{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'style/confirmation_ticket.css' %}">
+{% endblock %}
+
+{% block content %}
+{% block header %}
+{% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<main class="container">
+    <h2 class="text-center color_azul">Detalhes da Compra</h2>
+    <div class="text-center">
+        <div class="container_deteils g-3">
+            <div class="col-md-6 col-sm-12">
+                <p class="text-center color_laranja"><span class="span_confirmation">Evento:</span> {{ event.nome }}</p>
+                <p class="text-center color_laranja"><span class="span_confirmation">Cliente:</span> {{ cliente.nome }}
+                </p>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <p class="text-center color_laranja"><span class="span_confirmation">Data da Compra:</span> {{ venda.datavenda|date:"d/m/Y" }}</p>
+                <p class="text-center color_laranja"><span class="span_confirmation">Valor Total:</span> R$ {{ venda.valor }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="color_azul text-center mt-3">Ingressos Emitidos</h3>
+    <ul class="ticket-list">
+        {% for ingresso in ingressos %}
+        <li class="ticket-item">
+            <span class="span_confirmation">Ingresso ID:</span> {{ ingresso.id_ingresso }}<br>
+            <span class="span_confirmation">Setor:</span> {{ ingresso.id_setor.nome }}<br>
+            <span class="span_confirmation">Valor:</span> R$ {{ ingresso.valor }}<br>
+            <span class="span_confirmation">Data de Emissão:</span> {{ ingresso.data_venda|date:"d/m/Y H:i" }}
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'gerar_ingresso_pdf' venda.id %}" class="btn bg_azul color_laranjaWithHover">Baixar PDF dos
+            Ingressos</a>
+        <a href="{% url 'details_event' event.id %}" class="btn bg_azul color_laranjaWithHover">Voltar para o Evento</a>
+    </div>
+
+</main>
+{% endblock %}
+
+{% block footer %}
+{% include "partials/footer/footer.html" %}
+{% endblock %}

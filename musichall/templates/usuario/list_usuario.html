@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Usuários{% endblock %}
+
+{% block extra_css %} 
+    <link rel="stylesheet" href="style/usuario.css">
+{% endblock %}
+
+{% block content %}
+{% block header %}
+    {% include "partials/header/header.html" %}
+{% endblock %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }} text-center color_azul" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+
+<main class="container py-5">
+    <h1 class="text-center mb-4 color_azul">Lista de usuários</h1>
+    <div class="row">
+        {% for user in users %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title color_azul">{{ user.nome }}</h5>
+                    <p class="card-text color_azul">Email: {{ user.email }}</p>
+                    <p class="card-text color_azul">CPF: {{ user.cpf }}</p>
+                    <a href="{% url 'edit_user' user.id %}" class="btn bg_azul color_laranjaWithHover">Editar Usuário</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center color_azul">Nenhum usuário encontrado.</p>
+        {% endfor %}
+    </div>
+    <div class="text-center">
+        <a href="{% url "create_user" %}" class="btn bg_azul color_laranjaWithHover">Cadastrar novo usuário</a>
+    </div>
+</main>
+
+{% endblock %}
+{% block footer %}
+    {% include "partials/footer/footer.html" %}
+{% endblock footer %}

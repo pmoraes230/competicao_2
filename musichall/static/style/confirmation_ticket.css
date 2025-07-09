@@ -1,0 +1,117 @@
+.container_deteils {
+    display: flex;
+    font-size: 20px;
+}
+
+.span_confirmation {
+    color: var(--Primary_Color);
+    font-weight: bold;
+}
+
+/* static/css/estilos.css */
+
+/* Estilizar a lista de ingressos */
+.ticket-list {
+    list-style: none; /* Remove os marcadores padrão da lista */
+    padding: 0;
+    margin: 20px 0;
+    max-width: 600px; /* Limita a largura para melhor legibilidade */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilizar cada item da lista */
+.ticket-item {
+    background-color: #f9f9f9; /* Fundo claro */
+    border: 1px solid #ddd; /* Borda sutil */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 15px;
+    margin-bottom: 15px; /* Espaçamento entre itens */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    transition: transform 0.2s; /* Animação suave ao passar o mouse */
+}
+
+/* Efeito hover nos itens */
+.ticket-item:hover {
+    transform: translateY(-3px); /* Eleva o item ao passar o mouse */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilizar os textos dentro dos itens */
+.ticket-item strong {
+    color: #333; /* Cor do texto em negrito */
+    font-weight: 600;
+}
+
+.ticket-item br {
+    display: block;
+    margin-bottom: 8px; /* Espaçamento após cada linha */
+}
+
+/* Estilizar os botões */
+.btn-download, .btn-back {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.btn-download {
+    background-color: #28a745; /* Verde para o botão de download */
+    color: white;
+}
+
+.btn-download:hover {
+    background-color: #218838; /* Verde mais escuro no hover */
+}
+
+.btn-back {
+    background-color: #6c757d; /* Cinza para o botão de voltar */
+    color: white;
+}
+
+.btn-back:hover {
+    background-color: #5a6268; /* Cinza mais escuro no hover */
+}
+
+/* Estilizar mensagens de erro/sucesso */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error, .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .ticket-list {
+        max-width: 100%; /* Usa a largura total em telas pequenas */
+        padding: 0 10px;
+    }
+
+    .ticket-item {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .btn-download, .btn-back {
+        display: block; /* Botões em bloco em telas pequenas */
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
+}

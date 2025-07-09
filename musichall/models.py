@@ -1,5 +1,7 @@
 from django.db import models
 import locale
+from django.utils import timezone
+import uuid
 
 class Cliente(models.Model):
     nome = models.CharField(max_length=50)
@@ -92,3 +94,24 @@ class Venda(models.Model):
         
     def __str__(self):
         return f'cliente: {self.id_cliente} - evento: {self.id_evento}'
+
+class Ingresso(models.Model):
+    id_ingresso = models.CharField(max_length=36, default=uuid.uuid4, unique=True, editable=False)
+    id_evento = models.ForeignKey('Evento', db_column='id_evento', on_delete=models.CASCADE)
+    id_cliente = models.ForeignKey('Cliente', db_column='id_cliente', on_delete=models.CASCADE, null=False)  # Adicionado null=True
+    id_setor = models.ForeignKey('Setorevento', db_column='id_setor', on_delete=models.CASCADE)
+    id_venda = models.ForeignKey('Venda', db_column='id_venda', on_delete=models.CASCADE, null=True)
+    data_emissao = models.DateTimeField(default=timezone.now)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(
+        max_length=20,
+        choices=[('emitido', 'Emitido'), ('validado', 'Validado'), ('cancelado', 'Cancelado')],
+        default='emitido'
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'ingresso'
+
+    def __str__(self):
+        return f"Ingresso {self.id_ingresso} para {self.id_evento.nome} - {self.id_cliente.nome if self.id_cliente else 'Sem cliente'}"

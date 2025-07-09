@@ -10,6 +10,13 @@
 body {
     background-color: var(--cinza);
     font-family: "Jockey One", sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
 }
 
 .bg_laranja {
@@ -18,6 +25,10 @@ body {
 
 .bg_azul {
     background-color: var(--Primary_Color);
+}
+
+.bg_azul:hover {
+    background-color: #004c83;
 }
 
 .color_cinza {
@@ -82,6 +93,8 @@ body {
     margin: auto;
 }
 
+
+
 .footer_home {
     background-color: var(--Primary_Color);
     padding: 20px 0;
@@ -109,4 +122,8 @@ body {
     width: 100px;
     height: auto;
     border-radius: 50px;
+}
+
+.size-25 {
+    font-size: 45px;
 }

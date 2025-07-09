@@ -28,12 +28,6 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle color_azul" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if image_user %}
-                            <img src="{{ image_user }}" alt="Imagem do usuário">
-                        {% else %}
-                            <img src="{% static 'images/user.png' %}" alt="Imagem padrão">
-                        {% endif %}
-
                         {% if user_name %}
                             {{ user_name }}
                         {% else %}

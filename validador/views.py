@@ -13,7 +13,7 @@ def validar_ingresso(request):
             return redirect('validar_ingresso')
         
         try:
-            ingresso = models.Ingresso.objects.get(id_ingresso  =ingresso_id)
+            ingresso = models.Ingresso.objects.get(id_ingresso=ingresso_id)
             if ingresso.status == 'validado':
                 messages.error(request, 'Este ingresso já foi validado.')
                 return redirect('validar_ingresso')

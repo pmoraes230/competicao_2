@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from musichall.views import get_user_profile
+from musichall.views import get_user_profile, role_required
 from musichall import models
 
 # Create your views here.
+@role_required('Administrador')
 def home_dash(request):
     context = get_user_profile(request)
     all_event = models.Evento.objects.count()
@@ -29,6 +30,7 @@ def home_dash(request):
     
     return render(request, 'home/dash_home.html', context)
 
+@role_required('Administrador')
 def dash_venda(request):
     context = get_user_profile(request)
     vendas = models.Venda.objects.select_related('id_evento', 'id_cliente').order_by('-datavenda')
@@ -39,6 +41,7 @@ def dash_venda(request):
     
     return render(request, 'dash_vendas/dash_vendas.html', context)
 
+@role_required('Administrador')
 def dash_usuario(request):
     context = get_user_profile(request)
     usuario = models.Usuario.objects.all()
@@ -49,6 +52,7 @@ def dash_usuario(request):
     
     return render(request, 'dash_usuarios/dash_usuarios.html', context)
 
+@role_required('Administrador')
 def dash_evento(request):
     context = get_user_profile(request)
     evento = models.Evento.objects.all()

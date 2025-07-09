@@ -28,7 +28,6 @@ def get_user_profile(request):
             return {
                 'user_id': user.id,
                 'user_name': user.nome,
-                'user_imagem': user.imagem.url if user.imagem else None,
                 'user_role': user.id_perfil.nome,
                 'is_authenticated': True
             }
